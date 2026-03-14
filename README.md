@@ -10,5 +10,14 @@ O objetivo do projeto é estudar arquitetura backend, modelagem de domínio e pr
 - Entity Framework Core
 - PostgreSQL
 
+## Objetivo do Projeto
+
+Este projeto foi criado com fins educacionais para aprofundar conhecimentos em:
+
+- desenvolvimento backend
+- arquitetura de software
+- modelagem de banco de dados
+- boas práticas em APIs REST
+
 ## Desenvolvido por
 ### - Bruno Ferreira
