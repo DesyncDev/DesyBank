@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DesyBank.Api/DesyBank.Api.csproj" />
+    <Project Path="src/DesyBank.Application/DesyBank.Application.csproj" />
+    <Project Path="src/DesyBank.Domain/DesyBank.Domain.csproj" />
+    <Project Path="src/DesyBank.Infrastructure/DesyBank.Infrastructure.csproj" />
+  </Folder>
+</Solution>

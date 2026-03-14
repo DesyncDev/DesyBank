@@ -1,0 +1,55 @@
+# Build
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# ASP.NET
+appsettings.Development.json
+
+# Entity Framework
+Migrations/*Designer.cs
+*.db
+*.sqlite
+
+# Test results
+TestResults/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Publish
+publish/
+out/
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
