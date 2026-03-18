@@ -25,20 +25,27 @@ namespace DesyBank.Application.Services
         private readonly IUserRepository _repository;
         private readonly IPasswordHasher _hasher;
         private readonly ITokenService _token;
-        private readonly IValidator<RegisterRequest> _validator;
+
+        // Validators
+        private readonly IValidator<LoginRequest> _loginValidator;
+        private readonly IValidator<RegisterRequest> _registerValidator;
 
         public AuthService(IUserRepository repository, IPasswordHasher hasher,
-         ITokenService token, IValidator<RegisterRequest> validator)
+         ITokenService token, IValidator<RegisterRequest> registerValidator, IValidator<LoginRequest> loginValidator)
         {
             _repository = repository;
             _hasher = hasher;
             _token = token;
-            _validator = validator;
+            _registerValidator = registerValidator;
+            _loginValidator = loginValidator;
         }
 
         // Methods
         public async Task<OneOf<LoginResponse, AppError>> Login(LoginRequest loginRequest, CancellationToken ct)
         {
+            // Validator
+            var validation = await _loginValidator.ValidateAsync(loginRequest, ct);
+
             // Verifica se usuario existe
             var user = await _repository.GetUserByEmailAsync(loginRequest.Email, ct);
 
@@ -64,7 +71,7 @@ namespace DesyBank.Application.Services
         public async Task<OneOf<RegisterResponse, AppError>> Register(RegisterRequest registerRequest, CancellationToken ct)
         {
             // Validator
-            var validation = await _validator.ValidateAsync(registerRequest, ct);
+            var validation = await _registerValidator.ValidateAsync(registerRequest, ct);
 
             if (!validation.IsValid)
             {

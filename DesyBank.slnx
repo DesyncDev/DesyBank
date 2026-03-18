@@ -5,4 +5,7 @@
     <Project Path="src/DesyBank.Domain/DesyBank.Domain.csproj" />
     <Project Path="src/DesyBank.Infrastructure/DesyBank.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DesyBank.Tests/DesyBank.Tests.csproj" />
+  </Folder>
 </Solution>
