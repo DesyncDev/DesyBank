@@ -68,6 +68,9 @@ namespace DesyBank.Tests.Application.Services
                 password
             );
 
+            _loginValidator.ValidateAsync(Arg.Any<LoginRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new FluentValidation.Results.ValidationResult());
+
             _userRepository.GetUserByEmailAsync(expectedEmail, Arg.Any<CancellationToken>())
                 .Returns(user);
 
@@ -98,6 +101,9 @@ namespace DesyBank.Tests.Application.Services
             // --- ARRANGE ---
             var email = _faker.Internet.Email();
             var loginRequest = new LoginRequest(email, "qualquer_senha");
+
+            _loginValidator.ValidateAsync(Arg.Any<LoginRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new FluentValidation.Results.ValidationResult());
 
             _userRepository.GetUserByEmailAsync(email, Arg.Any<CancellationToken>())
                 .ReturnsNull();
@@ -132,6 +138,9 @@ namespace DesyBank.Tests.Application.Services
                 email,
                 expectedHashPassword
             );
+
+            _loginValidator.ValidateAsync(Arg.Any<LoginRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new FluentValidation.Results.ValidationResult());
 
             _userRepository.GetUserByEmailAsync(email, Arg.Any<CancellationToken>())
                 .Returns(user);
@@ -208,7 +217,7 @@ namespace DesyBank.Tests.Application.Services
             );
 
             _registerValidator.ValidateAsync(expectedRequest, Arg.Any<CancellationToken>())
-            .Returns(new FluentValidation.Results.ValidationResult());
+                .Returns(new FluentValidation.Results.ValidationResult());
 
             _userRepository.EmailAlreadyExistsAsync(expectedEmail, Arg.Any<CancellationToken>())
                 .Returns(true);
@@ -218,7 +227,7 @@ namespace DesyBank.Tests.Application.Services
 
             // Arrange
             result.IsT1.Should().BeTrue();
-            result.AsT1.Should().BeOfType<EmailAlreadyResgisteredError>();
+            result.AsT1.Should().BeOfType<EmailAlreadyRegisteredError>();
 
             await _userRepository.DidNotReceive().AddUserAsync(Arg.Any<User>(), Arg.Any<CancellationToken>());
             _hasher.DidNotReceive().GenerateHash(Arg.Any<string>());

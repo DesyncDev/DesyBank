@@ -50,5 +50,10 @@ namespace DesyBank.Infrastructure.Repositories
         => await _context.Users
         .AsNoTracking()
         .AnyAsync(e => e.Email == email, ct);
+
+        public async Task<bool> UserExistsByIdAsync(Guid userId, CancellationToken ct)
+        => await _context.Users
+        .AsNoTracking()
+        .AnyAsync(u => u.Id == userId, ct);
     }
 }

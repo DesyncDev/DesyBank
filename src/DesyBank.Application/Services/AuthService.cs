@@ -46,26 +46,34 @@ namespace DesyBank.Application.Services
             // Validator
             var validation = await _loginValidator.ValidateAsync(loginRequest, ct);
 
-            // Verifica se usuario existe
-            var user = await _repository.GetUserByEmailAsync(loginRequest.Email, ct);
+            if (!validation.IsValid)
+            {
+                var detail = string.Join(" | ", validation.Errors.Select(e => e.ErrorMessage));
 
-            if (user == null)
-                return new InvalidCredentialsError();
+                return new ValidationError(
+                    detail
+                );
+            }
+                // Verifica se usuario existe
+                var user = await _repository.GetUserByEmailAsync(loginRequest.Email, ct);
 
-            // Verifica se o hash da senha bate com o hash do banco
-            var validHash = _hasher.ValidateHash(loginRequest.Password, user.HashPassword);
+                if (user == null)
+                    return new InvalidCredentialsError();
 
-            if (!validHash)
-                return new InvalidCredentialsError();
+                // Verifica se o hash da senha bate com o hash do banco
+                var validHash = _hasher.ValidateHash(loginRequest.Password, user.HashPassword);
 
-            // Gera token
+                if (!validHash)
+                    return new InvalidCredentialsError();
 
-            var token = _token.GenerateToken(user);
+                // Gera token
 
-            return new LoginResponse(
-                user.Id,
-                token
-            );
+                var token = _token.GenerateToken(user);
+
+                return new LoginResponse(
+                    user.Id,
+                    token
+                );
         }
 
         public async Task<OneOf<RegisterResponse, AppError>> Register(RegisterRequest registerRequest, CancellationToken ct)
@@ -91,7 +99,7 @@ namespace DesyBank.Application.Services
             var emailExist = await _repository.EmailAlreadyExistsAsync(registerRequest.Email, ct);
 
             if (emailExist)
-                return new EmailAlreadyResgisteredError();
+                return new EmailAlreadyRegisteredError();
 
             // Cria hash da senha
             var hashPassword = _hasher.GenerateHash(registerRequest.Password);

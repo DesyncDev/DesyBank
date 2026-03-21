@@ -12,12 +12,12 @@ namespace DesyBank.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         // Service
         private readonly IUserService _service;
 
-        public UserController(IUserService service)
+        public UsersController(IUserService service)
         {
             _service = service;
         }
@@ -27,7 +27,7 @@ namespace DesyBank.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Me(CancellationToken ct)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
             var result = await _service.GetMyDataAsync(Guid.Parse(userId), ct);
 

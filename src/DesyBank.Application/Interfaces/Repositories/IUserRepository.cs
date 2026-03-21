@@ -15,5 +15,6 @@ namespace DesyBank.Application.Interfaces.Repositories
 
         // Validation Methods
         Task<bool> EmailAlreadyExistsAsync(string email, CancellationToken ct);
+        Task<bool> UserExistsByIdAsync(Guid userId, CancellationToken ct);
     }
 }

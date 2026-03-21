@@ -1,0 +1,100 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using DesyBank.Application.DTOs.Account;
+using DesyBank.Application.DTOs.Transaction;
+using DesyBank.Application.Errors.ErrorList;
+using DesyBank.Application.Interfaces;
+using DesyBank.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace DesyBank.Api.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AccountsController : ControllerBase
+    {
+        // Services
+        private readonly IAccountService _service;
+        private readonly ITransactionService _transactionService;
+
+        public AccountsController(IAccountService service, ITransactionService transactionService)
+        {
+            _service = service;
+            _transactionService = transactionService;
+        }
+
+        // Rotas
+        [HttpPost("create")]
+        [Authorize]
+        public async Task<IActionResult> CreateAccountAsync(CancellationToken ct)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            AccountRequest request = new AccountRequest(Guid.Parse(userId));
+            var result = await _service.CreateAccountAsync(request, ct);
+
+            return result.Match(
+                sucess => Created("", sucess),
+                error => error.type switch
+                {
+                    EErrorType.UnauthorizedError => Unauthorized(error),
+                    EErrorType.BusinessRuleError => BadRequest(error),
+                    _ => StatusCode(500, error)
+                }
+            );
+        }
+
+        [HttpPost("withdraw")]
+        [Authorize]
+        public async Task<IActionResult> WithDraw(OperationRequest request, CancellationToken ct)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+            // Cria o transaction Request
+            var transaction = new TransactionRequest(
+                Guid.Parse(userId),
+                request.Amount,
+                ETransactionType.WithDraw
+            );
+
+            var result = await _transactionService.CreateTransactionAsync(transaction, ct);
+
+            return result.Match(
+                sucess => Ok(sucess),
+                error => error.type switch
+                {
+                    EErrorType.NotFoundError => NotFound(error),
+                    EErrorType.BusinessRuleError => BadRequest(error),
+                    _ => StatusCode(500, error)
+                }
+            );
+        }
+
+        [HttpPost("deposit")]
+        [Authorize]
+        public async Task<IActionResult> Deposit(OperationRequest request, CancellationToken ct)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+            // Cria o transaction Request
+            var transaction = new TransactionRequest(
+                Guid.Parse(userId),
+                request.Amount,
+                ETransactionType.Deposit
+            );
+
+            var result = await _transactionService.CreateTransactionAsync(transaction, ct);
+
+            return result.Match(
+                sucess => Ok(sucess),
+                error => error.type switch
+                {
+                    _ => StatusCode(500, error)
+                }
+            );
+        }
+    }
+}

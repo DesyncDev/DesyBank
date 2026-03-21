@@ -34,5 +34,16 @@ namespace DesyBank.Domain.Models
         public IReadOnlyCollection<Transaction> Transactions => _transactions;
         public IReadOnlyCollection<Transfer> SentTransfers => _sentTransfers;
         public IReadOnlyCollection<Transfer> ReceivedTransfers => _receivedTransfers;
+    
+        // Methods
+        public void WithDraw(decimal amount)
+        {
+            Balance -= amount;
+        }
+
+        public void Deposit(decimal amount)
+        {
+            Balance += amount;
+        }
     }
 }

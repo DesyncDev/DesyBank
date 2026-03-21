@@ -6,5 +6,5 @@ using DesyBank.Domain.Enums;
 
 namespace DesyBank.Application.Errors.ErrorList
 {
-    public record EmailAlreadyResgisteredError() : AppError("Email already registered.", EErrorType.ConflictError, nameof(EmailAlreadyResgisteredError));
+    public record UserAlreadyHasAnAccountError() : AppError("User already has an account.", EErrorType.BusinessRuleError, nameof(UserAlreadyHasAnAccountError));
 }
