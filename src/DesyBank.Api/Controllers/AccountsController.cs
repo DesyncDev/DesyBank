@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using DesyBank.Application.DTOs.Account;
 using DesyBank.Application.DTOs.Transaction;
-using DesyBank.Application.Errors.ErrorList;
+using DesyBank.Application.DTOs.Transfer;
 using DesyBank.Application.Interfaces;
 using DesyBank.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -20,11 +16,15 @@ namespace DesyBank.Api.Controllers
         // Services
         private readonly IAccountService _service;
         private readonly ITransactionService _transactionService;
+        private readonly ITransferService _transferService;
 
-        public AccountsController(IAccountService service, ITransactionService transactionService)
+        public AccountsController(IAccountService service, ITransactionService transactionService,
+            ITransferService transferService
+        )
         {
             _service = service;
             _transactionService = transactionService;
+            _transferService = transferService;
         }
 
         // Rotas
@@ -92,6 +92,31 @@ namespace DesyBank.Api.Controllers
                 sucess => Ok(sucess),
                 error => error.type switch
                 {
+                    _ => StatusCode(500, error)
+                }
+            );
+        }
+
+        [HttpPost("transfer")]
+        [Authorize]
+        public async Task<IActionResult> Transfer(TransferOperationRequest request, CancellationToken ct)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+            var transferRequest = new TransferRequest(
+                Guid.Parse(userId),
+                request.ToAccountNumber,
+                request.Amount
+            );
+
+            var result = await _transferService.CreateTransferAsync(transferRequest, ct);
+
+            return result.Match(
+                sucess => Created("", sucess),
+                error => error.type switch
+                {
+                    EErrorType.NotFoundError => NotFound(error),
+                    EErrorType.BusinessRuleError => BadRequest(error),
                     _ => StatusCode(500, error)
                 }
             );

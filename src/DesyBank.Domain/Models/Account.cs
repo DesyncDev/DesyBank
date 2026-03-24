@@ -45,5 +45,11 @@ namespace DesyBank.Domain.Models
         {
             Balance += amount;
         }
+
+        public void TransferTo(Account toAccount, decimal amount)
+        {
+            Balance -= amount;
+            toAccount.Balance += amount;
+        }
     }
 }

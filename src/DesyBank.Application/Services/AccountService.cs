@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DesyBank.Application.DTOs.Account;
 using DesyBank.Application.Errors;
 using DesyBank.Application.Errors.ErrorList;
@@ -9,7 +5,6 @@ using DesyBank.Application.Interfaces;
 using DesyBank.Application.Interfaces.Repositories;
 using DesyBank.Domain.Models;
 using FluentValidation;
-using Microsoft.VisualBasic;
 using OneOf;
 
 namespace DesyBank.Application.Services
@@ -22,13 +17,15 @@ namespace DesyBank.Application.Services
         // Repositories
         private readonly IAccountRepository _accountRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IDbRepository _dbRepository;
 
         public AccountService(IAccountRepository accountRepository, IUserRepository userRepository,
-            IValidator<AccountRequest> validator
+            IValidator<AccountRequest> validator, IDbRepository dbRepository
         )
         {
             _accountRepository = accountRepository;
-            _userRepository = userRepository;  
+            _userRepository = userRepository;
+            _dbRepository = dbRepository;  
             _validator = validator; 
         }
 
@@ -77,6 +74,7 @@ namespace DesyBank.Application.Services
 
             // Persiste
             await _accountRepository.AddAsync(newAccount, ct);
+            await _dbRepository.SaveChangesAsync(ct);
 
             // Retorno
             return new AccountResponse(

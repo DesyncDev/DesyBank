@@ -28,6 +28,7 @@ namespace DesyBank.Tests.Application.Services
 
         // Mock
         private readonly IUserRepository _userRepository;
+        private readonly IDbRepository _dbRepository;
         private readonly IPasswordHasher _hasher;
         private readonly ITokenService _token;
         private readonly IValidator<RegisterRequest> _registerValidator;
@@ -37,11 +38,12 @@ namespace DesyBank.Tests.Application.Services
         public AuthServiceTests()
         {
             _userRepository = Substitute.For<IUserRepository>();
+            _dbRepository = Substitute.For<IDbRepository>();
             _hasher = Substitute.For<IPasswordHasher>();
             _token = Substitute.For<ITokenService>();
             _registerValidator = Substitute.For<IValidator<RegisterRequest>>();
             _loginValidator = Substitute.For<IValidator<LoginRequest>>();
-            _sut = new AuthService(_userRepository, _hasher, _token, _registerValidator, _loginValidator);
+            _sut = new AuthService(_userRepository, _hasher, _token, _registerValidator, _loginValidator, _dbRepository);
         }
 
         // Login Tests

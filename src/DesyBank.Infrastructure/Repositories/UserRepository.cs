@@ -25,7 +25,6 @@ namespace DesyBank.Infrastructure.Repositories
         public async Task AddUserAsync(User user, CancellationToken ct)
         {
             _context.Users.Add(user);
-            await _context.SaveChangesAsync(ct);
         }
 
         public async Task<User?> GetUserByEmailAsync(string email, CancellationToken ct)

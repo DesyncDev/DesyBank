@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Security;
-using System.Threading.Tasks;
 using DesyBank.Application.DTOs.Auth;
 using DesyBank.Application.DTOs.Auth.Login;
 using DesyBank.Application.Errors;
@@ -12,7 +6,6 @@ using DesyBank.Application.Interfaces;
 using DesyBank.Application.Interfaces.Hasher;
 using DesyBank.Application.Interfaces.JWT;
 using DesyBank.Application.Interfaces.Repositories;
-using DesyBank.Domain.Enums;
 using DesyBank.Domain.Models;
 using FluentValidation;
 using OneOf;
@@ -23,6 +16,7 @@ namespace DesyBank.Application.Services
     {
         // DI
         private readonly IUserRepository _repository;
+        private readonly IDbRepository _dbRepository;
         private readonly IPasswordHasher _hasher;
         private readonly ITokenService _token;
 
@@ -31,9 +25,12 @@ namespace DesyBank.Application.Services
         private readonly IValidator<RegisterRequest> _registerValidator;
 
         public AuthService(IUserRepository repository, IPasswordHasher hasher,
-         ITokenService token, IValidator<RegisterRequest> registerValidator, IValidator<LoginRequest> loginValidator)
+            ITokenService token, IValidator<RegisterRequest> registerValidator, IValidator<LoginRequest> loginValidator,
+            IDbRepository dbRepository
+         )
         {
             _repository = repository;
+            _dbRepository = dbRepository;
             _hasher = hasher;
             _token = token;
             _registerValidator = registerValidator;
@@ -113,6 +110,7 @@ namespace DesyBank.Application.Services
 
             // Persiste
             await _repository.AddUserAsync(newUser, ct);
+            await _dbRepository.SaveChangesAsync(ct);
 
             // Retorno
             return new RegisterResponse(

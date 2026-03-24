@@ -1,18 +1,10 @@
 using System.Text;
-using DesyBank.Application.Interfaces;
-using DesyBank.Application.Interfaces.Hasher;
-using DesyBank.Application.Interfaces.JWT;
-using DesyBank.Application.Interfaces.Repositories;
-using DesyBank.Application.Services;
 using DesyBank.Application.Validations;
 using DesyBank.Infrastructure.Data;
-using DesyBank.Infrastructure.Hasher;
-using DesyBank.Infrastructure.JWT;
-using DesyBank.Infrastructure.Repositories;
+using DesyBank.Infrastructure.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
@@ -45,18 +37,12 @@ builder.Services.AddDbContext<AppDbContext>(Options =>
 );
 
 // DI
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
-builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddApplicationServices();
+
+// Fluent Validation
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();  
 
-// ADD CONTROLLERSt
+// ADD CONTROLLERS
 builder.Services.AddControllers();
 
 //OPEN API

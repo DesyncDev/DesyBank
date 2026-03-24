@@ -28,6 +28,7 @@ namespace DesyBank.Tests.Application.Services
         private readonly IValidator<TransactionRequest> _validator;
         private readonly ITransactionRepository _transactionRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IDbRepository _dbRepository;
 
         // Service
         private readonly TransactionService _sut;
@@ -37,7 +38,8 @@ namespace DesyBank.Tests.Application.Services
             _validator = Substitute.For<IValidator<TransactionRequest>>();
             _transactionRepository = Substitute.For<ITransactionRepository>();
             _accountRepository = Substitute.For<IAccountRepository>();
-            _sut = new TransactionService(_transactionRepository, _validator,  _accountRepository);
+            _dbRepository = Substitute.For<IDbRepository>();
+            _sut = new TransactionService(_transactionRepository, _validator,  _accountRepository, _dbRepository);
         }
 
         // Tests 

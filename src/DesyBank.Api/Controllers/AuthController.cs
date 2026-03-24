@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Authentication;
-using System.Threading.Tasks;
 using DesyBank.Application.DTOs.Auth;
 using DesyBank.Application.DTOs.Auth.Login;
 using DesyBank.Application.Interfaces;

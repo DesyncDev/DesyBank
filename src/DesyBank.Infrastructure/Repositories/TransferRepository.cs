@@ -8,20 +8,20 @@ using DesyBank.Infrastructure.Data;
 
 namespace DesyBank.Infrastructure.Repositories
 {
-    public class TransactionRepository : ITransactionRepository
+    public class TransferRepository : ITransferRepository
     {
         // Database
         private readonly AppDbContext _context;
 
-        public TransactionRepository(AppDbContext context)
+        public TransferRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        // Methods
-        public async Task AddAsync(Transaction transaction, CancellationToken ct)
+        // Métodos
+        public async Task AddAsync(Transfer transfer, CancellationToken ct)
         {
-            _context.Transactions.Add(transaction);
+            _context.Transfers.Add(transfer);
         }
     }
 }

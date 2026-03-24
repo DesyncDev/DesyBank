@@ -23,7 +23,6 @@ namespace DesyBank.Infrastructure.Repositories
         public async Task AddAsync(Account account, CancellationToken ct)
         {
             _context.Accounts.Add(account);
-            await _context.SaveChangesAsync(ct);
         }
 
         public async Task SaveChangesAsync(CancellationToken ct)
@@ -32,6 +31,11 @@ namespace DesyBank.Infrastructure.Repositories
         public async Task<Account?> GetAccountByUserAsync(Guid userId, CancellationToken ct)
         => await _context.Accounts
         .Where(an => an.UserId == userId)
+        .FirstOrDefaultAsync(ct);
+
+        public async Task<Account?> GetAcountByNumberAsync(string accountNumber, CancellationToken ct)
+        => await _context.Accounts
+        .Where(an => an.AccountNumber == accountNumber)
         .FirstOrDefaultAsync(ct);
 
         // Validation Methods

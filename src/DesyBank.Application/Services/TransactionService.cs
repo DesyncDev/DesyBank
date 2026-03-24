@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DesyBank.Application.DTOs.Transaction;
 using DesyBank.Application.Errors;
 using DesyBank.Application.Errors.ErrorList;
@@ -22,14 +18,16 @@ namespace DesyBank.Application.Services
         // Repositories
         private readonly ITransactionRepository _transactionRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IDbRepository _dbRepository;
 
         public TransactionService(ITransactionRepository repository, IValidator<TransactionRequest> validator,
-            IAccountRepository accountRepository
+            IAccountRepository accountRepository, IDbRepository dbRepository
         )
         {
             _transactionRepository = repository;
             _validator = validator;
             _accountRepository = accountRepository;
+            _dbRepository = dbRepository;
         }
 
         // Methods
@@ -76,7 +74,7 @@ namespace DesyBank.Application.Services
 
             // Persiste
             await _transactionRepository.AddAsync(transaction, ct);
-            await _accountRepository.SaveChangesAsync(ct);
+            await _dbRepository.SaveChangesAsync(ct);
 
             return new TransactionResponse(
                 account.AccountNumber,
