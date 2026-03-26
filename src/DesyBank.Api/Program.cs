@@ -45,6 +45,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>()
 // ADD CONTROLLERS
 builder.Services.AddControllers();
 
+// Cors
+builder.Services.AddCors();
+
 //OPEN API
 builder.Services.AddOpenApi();
 
@@ -55,6 +58,10 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+    app.UseCors(policy => policy
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 }
 
 app.UseHttpsRedirection();

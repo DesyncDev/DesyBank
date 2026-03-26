@@ -104,7 +104,7 @@ namespace DesyBank.Application.Services
             // Cria usuario
             var newUser = new User(
                 registerRequest.FullName,
-                registerRequest.Email,
+                registerRequest.Email.Trim().ToLower(),
                 hashPassword
             );
 

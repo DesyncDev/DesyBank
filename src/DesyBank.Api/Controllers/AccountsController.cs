@@ -121,5 +121,23 @@ namespace DesyBank.Api.Controllers
                 }
             );
         }
+
+        [HttpGet("balance")]
+        [Authorize]
+        public async Task<IActionResult> Balance(CancellationToken ct)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+            var result = await _service.GetBalance(Guid.Parse(userId), ct);
+
+            return result.Match(
+                sucess => Ok(sucess),
+                error => error.type switch
+                {
+                    EErrorType.NotFoundError => NotFound(error),
+                    _ => StatusCode(500, error)
+                }
+            );
+        }
     }
 }

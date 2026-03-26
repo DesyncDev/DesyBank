@@ -9,12 +9,13 @@ namespace DesyBank.Domain.Models
     public class Transaction
     {
         // Constructor
-        public Transaction(Guid accountId, decimal amount, ETransactionType type)
+        public Transaction(Guid accountId, decimal amount, ETransactionType type, ETransferType? transferType)
         {
             Id = Guid.NewGuid();
             AccountId = accountId;
             Amount = amount;
             Type = type;
+            TransferType = transferType;
             CreatedAt = DateTime.UtcNow;
         }
 
@@ -24,6 +25,7 @@ namespace DesyBank.Domain.Models
         public Account Account { get; private set; } = null!;
         public decimal Amount { get; init; }
         public ETransactionType Type { get; private set; }
+        public ETransferType? TransferType { get; private set; }
         public DateTime CreatedAt { get; init; }
     }
 }

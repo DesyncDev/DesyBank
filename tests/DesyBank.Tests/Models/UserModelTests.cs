@@ -18,7 +18,11 @@ namespace DesyBank.Tests.Models
         [Trait("Models", "User")]
         public void UserConstructor_ShouldGenerateNonEmptyId()
         {
-            var user = CreateValidUser();
+            var user = new User(
+                _faker.Name.FullName(),
+                _faker.Internet.Email(),
+                BCrypt.Net.BCrypt.HashPassword(_faker.Internet.Password())
+            );
 
             user.Id.Should().NotBeEmpty();
         }
@@ -40,45 +44,12 @@ namespace DesyBank.Tests.Models
             );
 
             // Expected result
+            user.Id.Should().NotBeEmpty();
             user.FullName.Should().Be(expectedFullName);
             user.Email.Should().Be(expectedEmail);
             user.HashPassword.Should().Be(expectedHash);
-        }
-
-        [Fact]
-        [Trait("Models", "User")]
-        public void UserConstructor_ReceivesValidValues_SetIsBlockedFalse()
-        {
-            var user = CreateValidUser();
-
-            // Checks if IsBlocked is set to false.
             user.IsBlocked.Should().BeFalse();
-        }
-
-        [Fact]
-        [Trait("Models", "User")]
-        public void UserConstructor_ShouldSetJoinedAtToApproximatelyCurrentTime()
-        {
-            var beforeCreation = DateTime.UtcNow.AddSeconds(-1);
-
-            var user = CreateValidUser();
-
-            var afterCreation = DateTime.UtcNow.AddSeconds(1);
-
-            // Checks user JoinedAt
-            user.JoinedAt.Should().BeOnOrBefore(afterCreation);
-            user.JoinedAt.Should().BeOnOrAfter(beforeCreation);
-
-        }
-
-        // Método auxiliar para construção de usuário
-        private User CreateValidUser()
-        {
-            return new User(
-                _faker.Name.FullName(),
-                _faker.Internet.Email(),
-                BCrypt.Net.BCrypt.HashPassword(_faker.Internet.Password())
-            );
+            user.JoinedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
         }
     }
 }

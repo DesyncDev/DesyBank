@@ -69,7 +69,8 @@ namespace DesyBank.Application.Services
             var transaction = new Transaction(
                 account.Id,
                 request.Amount,
-                request.Type
+                request.Type, 
+                null
             );
 
             // Persiste

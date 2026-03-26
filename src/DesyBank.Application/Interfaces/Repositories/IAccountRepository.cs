@@ -10,6 +10,7 @@ namespace DesyBank.Application.Interfaces.Repositories
     {
         Task AddAsync(Account account, CancellationToken ct);
         Task<Account?> GetAccountByUserAsync(Guid userId, CancellationToken ct);
+        Task<Account?> GetAccountByUserReadAsync(Guid userId, CancellationToken ct);
         Task<Account?> GetAcountByNumberAsync(string accountNumber, CancellationToken ct);
         Task<bool> AccountExistByUserAsync(Guid userId, CancellationToken ct);
         Task<bool> AccountAlreadyExistsAsync(string accountNumber, CancellationToken ct);

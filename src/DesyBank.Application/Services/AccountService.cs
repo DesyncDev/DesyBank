@@ -1,4 +1,5 @@
 using DesyBank.Application.DTOs.Account;
+using DesyBank.Application.DTOs.Transaction;
 using DesyBank.Application.Errors;
 using DesyBank.Application.Errors.ErrorList;
 using DesyBank.Application.Interfaces;
@@ -82,6 +83,16 @@ namespace DesyBank.Application.Services
                 newAccount.CreatedAt
             );
         } 
+
+        public async Task<OneOf<OperationRequest, AppError>> GetBalance(Guid userId, CancellationToken ct)
+        {
+            var account = await _accountRepository.GetAccountByUserReadAsync(userId, ct);
+
+            if (account == null)
+                return new AccountNotFoundError();
+
+            return new OperationRequest(account.Balance); 
+        }
 
         // Métodos auxiliares
         private string GenerateAccountNumber()

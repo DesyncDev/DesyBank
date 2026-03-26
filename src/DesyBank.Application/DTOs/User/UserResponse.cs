@@ -9,6 +9,7 @@ namespace DesyBank.Application.DTOs.User
     (
         Guid Id,
         string FullName,
+        string AccountNumber,
         DateTime JoinedAt
     );
 }

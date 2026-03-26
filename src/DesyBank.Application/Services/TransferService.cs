@@ -73,15 +73,24 @@ namespace DesyBank.Application.Services
             );
 
             // Gera Transaction
-            var newTransaction = new Transaction(
+            var debitTransaction = new Transaction(
                 userAccount.Id,
                 request.Amount,
-                ETransactionType.Transfer
+                ETransactionType.Transfer,
+                ETransferType.Debit
             );  
+
+            var creditTransaction = new Transaction(
+                toAccount.Id,
+                request.Amount,
+                ETransactionType.Transfer,
+                 ETransferType.Credit
+            );
 
             // Salva os dois
             await _transferRepository.AddAsync(newTransfer, ct);
-            await _transactionRepository.AddAsync(newTransaction, ct);
+            await _transactionRepository.AddAsync(debitTransaction, ct);
+            await _transactionRepository.AddAsync(creditTransaction, ct);
 
             await _dbRepository.SaveChangesAsync(ct);
 

@@ -11,7 +11,7 @@ namespace DesyBank.Application.Interfaces.Repositories
     {
         Task AddUserAsync(User user, CancellationToken ct);
         Task<User?> GetUserByEmailAsync(string email, CancellationToken ct);
-        Task<UserResponse?> GetUserByIdAsync(Guid userId, CancellationToken ct);
+        Task<User?> GetUserByIdAsync(Guid userId, CancellationToken ct);
 
         // Validation Methods
         Task<bool> EmailAlreadyExistsAsync(string email, CancellationToken ct);

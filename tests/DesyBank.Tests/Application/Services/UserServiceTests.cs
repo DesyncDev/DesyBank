@@ -22,6 +22,7 @@ namespace DesyBank.Tests.Application.Services
 
         // Mock
         private readonly IUserRepository _userRepository;
+        private readonly IAccountRepository _accountRepository;
         
         // Service
         private readonly UserService _userService;
@@ -29,7 +30,8 @@ namespace DesyBank.Tests.Application.Services
         public UserServiceTests()
         {
             _userRepository = Substitute.For<IUserRepository>();
-            _userService = new UserService(_userRepository);
+            _accountRepository = Substitute.For<IAccountRepository>();
+            _userService = new UserService(_userRepository, _accountRepository);
         }
 
         [Fact]
@@ -37,14 +39,26 @@ namespace DesyBank.Tests.Application.Services
         public async Task GetMyDataAsync_WhenUserExists_ReturnsUserResponse()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var expectedUserResponse = CreateValidUserResponse();
+            var user = CreateValidUser();
+            var account = new Account(
+                user.Id,
+                "123456-7"
+            );
 
-            _userRepository.GetUserByIdAsync(userId, Arg.Any<CancellationToken>())
-                .Returns(expectedUserResponse);
+            _userRepository.GetUserByIdAsync(user.Id, Arg.Any<CancellationToken>())
+                .Returns(user);
+            _accountRepository.GetAccountByUserReadAsync(user.Id, Arg.Any<CancellationToken>())
+                .Returns(account);
+
+            var expectedUserResponse = new UserResponse(
+                user.Id,
+                user.FullName,
+                account.AccountNumber,
+                user.JoinedAt
+            );
 
             // Act
-            var result = await _userService.GetMyDataAsync(userId, CancellationToken.None);
+            var result = await _userService.GetMyDataAsync(user.Id, CancellationToken.None);
 
             // Assert
             result.IsT0.Should().BeTrue(); // É do tipo UserResponse (sucesso)?
@@ -52,7 +66,7 @@ namespace DesyBank.Tests.Application.Services
             var userResponse = result.AsT0; // Pega o valor
             userResponse.Should().Be(expectedUserResponse);
 
-            await _userRepository.Received(1).GetUserByIdAsync(userId, Arg.Any<CancellationToken>());
+            await _userRepository.Received(1).GetUserByIdAsync(user.Id, Arg.Any<CancellationToken>());
         }
 
         [Fact]
@@ -78,12 +92,12 @@ namespace DesyBank.Tests.Application.Services
         }
 
         // Método a auxiliar para criação de usuário válido
-        private UserResponse CreateValidUserResponse()
+        private User CreateValidUser()
         {
-            return new UserResponse(
-                Id: Guid.NewGuid(),
-                FullName: _faker.Name.FullName(),
-                JoinedAt: DateTime.UtcNow
+            return new User(
+                _faker.Name.FullName(),
+                _faker.Internet.Email(),
+                "exemplo_hash_password"
             );
         }
     }

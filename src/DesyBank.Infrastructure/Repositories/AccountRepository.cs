@@ -33,6 +33,12 @@ namespace DesyBank.Infrastructure.Repositories
         .Where(an => an.UserId == userId)
         .FirstOrDefaultAsync(ct);
 
+        public async Task<Account?> GetAccountByUserReadAsync(Guid userId, CancellationToken ct)
+        => await _context.Accounts
+        .AsNoTracking()
+        .Where(an => an.UserId == userId)
+        .FirstOrDefaultAsync(ct);
+
         public async Task<Account?> GetAcountByNumberAsync(string accountNumber, CancellationToken ct)
         => await _context.Accounts
         .Where(an => an.AccountNumber == accountNumber)

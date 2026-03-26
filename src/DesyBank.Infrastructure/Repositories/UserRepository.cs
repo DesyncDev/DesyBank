@@ -33,15 +33,10 @@ namespace DesyBank.Infrastructure.Repositories
         .Where(e => e.Email == email)
         .FirstOrDefaultAsync(ct);
 
-        public async Task<UserResponse?> GetUserByIdAsync(Guid userId, CancellationToken ct)
+        public async Task<User?> GetUserByIdAsync(Guid userId, CancellationToken ct)
         => await _context.Users
         .AsNoTracking()
         .Where(pk => pk.Id == userId)
-        .Select(x => new UserResponse(
-            x.Id,
-            x.FullName,
-            x.JoinedAt
-        ))
         .FirstOrDefaultAsync(ct);
 
         // Verification Methods

@@ -169,7 +169,7 @@ namespace DesyBank.Tests.Application.Services
         {
             // Arrange
             var expectedFullName = _faker.Name.FullName();
-            var expectedEmail = _faker.Internet.Email();
+            var expectedEmail = _faker.Internet.Email().Trim().ToLower();
             var password = "password";
             var expectedFakeHash = "fake_hash_password";
 
