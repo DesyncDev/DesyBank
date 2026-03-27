@@ -139,5 +139,22 @@ namespace DesyBank.Api.Controllers
                 }
             );
         }
+
+        [HttpGet("transactions")]
+        [Authorize]
+        public async Task<IActionResult> Transactions(CancellationToken ct, [FromQuery] int p = 1, [FromQuery] int t = 10)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var result = await _transactionService.GetPagedTransactionsAsync(Guid.Parse(userId), p, t, ct);
+
+            return result.Match(
+                sucess => Ok(sucess),
+                error => error.type switch
+                {
+                    EErrorType.NotFoundError => NotFound(error),
+                    _ => StatusCode(500, error)
+                }
+            );
+        }
     }
 }

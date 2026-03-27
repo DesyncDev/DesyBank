@@ -1,3 +1,4 @@
+using DesyBank.Application.DTOs.Paged;
 using DesyBank.Application.DTOs.Transaction;
 using DesyBank.Application.Errors;
 using DesyBank.Application.Errors.ErrorList;
@@ -83,6 +84,21 @@ namespace DesyBank.Application.Services
                 request.Type,
                 DateTime.UtcNow
             );
+        }
+
+        public async Task<OneOf<PagedResponse<TransactionResponse>, AppError>> GetPagedTransactionsAsync(Guid userId, int pages, int length, CancellationToken ct)
+        {
+            var userAccount = await _accountRepository.GetAccountByUserReadAsync(userId, ct);
+
+            if (userAccount == null)
+                return new AccountNotFoundError();
+
+            var (items, total) = await _transactionRepository.GetPagedTransactionsAsync(pages, length, ct);
+            
+            var dtos = items.Select(x => new TransactionResponse(userAccount.AccountNumber, x.Amount, x.Type, x.CreatedAt)).ToList();
+            var totalPages = (int)Math.Ceiling((double)total / length);
+
+            return new PagedResponse<TransactionResponse>(dtos, pages, totalPages, total);
         }
     }
 }
